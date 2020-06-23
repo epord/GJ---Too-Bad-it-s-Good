@@ -6,10 +6,11 @@ public class FrogControls : MonoBehaviour
 {
     // Contants that should be initialized from th GUI
     public float MAX_JUMP_CHARGE = 300.0f;
-    public float JUMP_FORCE = 1000.0f;
+    public float JUMP_FORCE = 3000.0f;
 
-    private float leftForce = 0.0f;
-    private float rightForce = 0.0f;
+    // TODO: keep them private (public for debug only)
+    public float leftForce = 0.0f;
+    public float rightForce = 0.0f;
 
     private Rigidbody2D m_RigidBody;
 
@@ -36,6 +37,9 @@ public class FrogControls : MonoBehaviour
 
     void Update()
     {
+
+        // TODO: do not allow to charge nor jump when in the air
+
         if (Input.GetButton("LeftLeg"))
         {
             leftForce += 1.0f;

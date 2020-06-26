@@ -7,11 +7,16 @@ public class FrogControls : MonoBehaviour
     // Contants that should be initialized from th GUI
     [SerializeField] private float MAX_JUMP_CHARGE = 300.0f;
     [SerializeField] private float JUMP_FORCE = 3000.0f;
+    [SerializeField] private float MAX_WALL_HANG_TIME = 5f; // in seconds
     [SerializeField] private LayerMask platformLayerMask;
 
     // TODO: keep them private (public for debug only)
     public float leftForce = 0.0f;
     public float rightForce = 0.0f;
+    public bool isHanging = false;
+    public bool hasHanged = false;
+
+    private IEnumerator hangOnWallCoroutine;
 
     private Rigidbody2D m_RigidBody;
     private BoxCollider2D m_BoxCollider2D;
@@ -22,17 +27,24 @@ public class FrogControls : MonoBehaviour
         m_BoxCollider2D = GetComponent<BoxCollider2D>();
     }
 
-    private void Jump()
+    private void Jump(Vector2 direction)
     {
         if (leftForce == 0 && rightForce == 0) return;
+        Unfreeze();
 
-        float angle = (leftForce - rightForce) / (leftForce + rightForce) * 90;
-        float force = Mathf.Max(leftForce, rightForce) / MAX_JUMP_CHARGE * JUMP_FORCE;
+        float directionAngle = -Vector2.SignedAngle(Vector2.up, direction);
+        float angle = directionAngle + (leftForce - rightForce) / (leftForce + rightForce) * 90;
+        float force = Mathf.Min(MAX_JUMP_CHARGE, Mathf.Max(leftForce, rightForce)) / MAX_JUMP_CHARGE * JUMP_FORCE;
         float xForce = Mathf.Sin(angle * Mathf.PI / 180.0f) * force;
         float yForce = Mathf.Cos(angle * Mathf.PI / 180.0f) * force;
         Vector2 jumpVector = new Vector2(xForce, yForce);
         m_RigidBody.AddForce(jumpVector);
 
+        ResetJump();
+    }
+
+    private void ResetJump()
+    {
         // Reset both legs
         leftForce = 0;
         rightForce = 0;
@@ -42,15 +54,54 @@ public class FrogControls : MonoBehaviour
     {
         float groundCheckerHeight = m_BoxCollider2D.bounds.extents.y * 0.1f; // 10% of the collider's height
         RaycastHit2D raycastHit = Physics2D.BoxCast(m_BoxCollider2D.bounds.center, m_BoxCollider2D.bounds.size, 0f, Vector2.down, groundCheckerHeight, platformLayerMask);
-        Debug.DrawRay(m_BoxCollider2D.bounds.center + new Vector3(m_BoxCollider2D.bounds.extents.x, 0), Vector2.down * (m_BoxCollider2D.bounds.extents.y + groundCheckerHeight), Color.green);
-        Debug.DrawRay(m_BoxCollider2D.bounds.center - new Vector3(m_BoxCollider2D.bounds.extents.x, 0), Vector2.down * (m_BoxCollider2D.bounds.extents.y + groundCheckerHeight), Color.green);
-        Debug.DrawRay(m_BoxCollider2D.bounds.center - new Vector3(0, m_BoxCollider2D.bounds.extents.y), Vector2.right * (m_BoxCollider2D.bounds.extents.y), Color.green);
         return raycastHit.collider != null;
+    }
+
+    private bool IsTouchingRight()
+    {
+        float leftCheckerWidth = m_BoxCollider2D.bounds.extents.x * 0.1f; // 10% of the collider's width
+        RaycastHit2D raycastHit = Physics2D.BoxCast(m_BoxCollider2D.bounds.center, m_BoxCollider2D.bounds.size, 0f, Vector2.right, leftCheckerWidth, platformLayerMask);
+        return raycastHit.collider != null;
+    }
+
+    private bool IsTouchingLeft()
+    {
+        float leftCheckerWidth = m_BoxCollider2D.bounds.extents.x * 0.1f; // 10% of the collider's width
+        RaycastHit2D raycastHit = Physics2D.BoxCast(m_BoxCollider2D.bounds.center, m_BoxCollider2D.bounds.size, 0f, Vector2.left, leftCheckerWidth, platformLayerMask);
+        return raycastHit.collider != null;
+    }
+
+    private void Freeze()
+    {
+        isHanging = true;
+        m_RigidBody.constraints |= RigidbodyConstraints2D.FreezePosition;
+    }
+
+    private void Unfreeze()
+    {
+        m_RigidBody.constraints &= ~RigidbodyConstraints2D.FreezePosition;
+        m_RigidBody.AddForce(Vector2.zero); // hack to unfreeze position contraints
+        isHanging = false;
+        hasHanged = true;
+    }
+
+    IEnumerator HangOnWall()
+    {
+        Freeze();
+        yield return new WaitForSeconds(MAX_WALL_HANG_TIME);
+        Unfreeze();
     }
 
     void Update()
     {
-        if (IsGrounded())
+        bool isGrounded = IsGrounded();
+        bool isTouchingLeft = IsTouchingLeft();
+        bool isTouchingRight = IsTouchingRight();
+
+        if (isGrounded) hasHanged = false;
+
+        // Jump and charge logic
+        if (isGrounded || isTouchingLeft || isTouchingRight)
         {
             if (Input.GetButton("LeftLeg"))
             {
@@ -65,8 +116,20 @@ public class FrogControls : MonoBehaviour
             if (Input.GetButtonUp("LeftLeg") || Input.GetButtonUp("RightLeg")
                 || rightForce >= MAX_JUMP_CHARGE || leftForce >= MAX_JUMP_CHARGE)
             {
-                Jump();
+                if (isGrounded) Jump(Vector2.up);
+                else if (isTouchingRight) Jump(Vector2.left);
+                else if (isTouchingLeft) Jump(Vector2.right);
             }
+        } else
+        {
+            ResetJump();
+        }
+        // Hang logic
+        if (!isHanging && !hasHanged && !isGrounded && (isTouchingLeft || isTouchingRight))
+        {
+            if (hangOnWallCoroutine != null) StopCoroutine(hangOnWallCoroutine);
+            hangOnWallCoroutine = HangOnWall();
+            StartCoroutine(hangOnWallCoroutine);
         }
     }
 }

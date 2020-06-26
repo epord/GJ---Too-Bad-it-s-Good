@@ -16,6 +16,8 @@ public class FrogControls : MonoBehaviour
     public float rightForce = 0.0f;
     public bool isHanging = false;
     public bool hasHanged = false;
+    public bool leftReleasedSinceLastJump = true;
+    public bool rightReleasedSinceLastJump = true;
 
     private IEnumerator hangOnWallCoroutine;
 
@@ -42,6 +44,9 @@ public class FrogControls : MonoBehaviour
         m_RigidBody.AddForce(jumpVector);
 
         ResetJump();
+
+        leftReleasedSinceLastJump = !Input.GetButton("LeftLeg");
+        rightReleasedSinceLastJump = !Input.GetButton("RightLeg");
     }
 
     private void ResetJump()
@@ -101,9 +106,16 @@ public class FrogControls : MonoBehaviour
 
         if (isGrounded) hasHanged = false;
 
+
+        if (!leftReleasedSinceLastJump) leftReleasedSinceLastJump = !Input.GetButton("LeftLeg");
+        if (!rightReleasedSinceLastJump) rightReleasedSinceLastJump = !Input.GetButton("RightLeg");
+
         // Jump and charge logic
-        if (isGrounded || isTouchingLeft || isTouchingRight)
-        {
+        if (
+            leftReleasedSinceLastJump
+            && rightReleasedSinceLastJump
+            && (isGrounded || isTouchingLeft || isTouchingRight)
+        ) {
             if (Input.GetButton("LeftLeg"))
             {
                 leftForce += 1.0f;

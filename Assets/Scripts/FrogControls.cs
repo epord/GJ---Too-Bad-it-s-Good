@@ -5,21 +5,24 @@ using UnityEngine;
 public class FrogControls : MonoBehaviour
 {
     // Contants that should be initialized from th GUI
-    public float MAX_JUMP_CHARGE = 300.0f;
-    public float JUMP_FORCE = 3000.0f;
+    [SerializeField] private float MAX_JUMP_CHARGE = 300.0f;
+    [SerializeField] private float JUMP_FORCE = 3000.0f;
+    [SerializeField] private LayerMask platformLayerMask;
 
     // TODO: keep them private (public for debug only)
     public float leftForce = 0.0f;
     public float rightForce = 0.0f;
 
     private Rigidbody2D m_RigidBody;
+    private BoxCollider2D m_BoxCollider2D;
 
     void Start()
     {
         m_RigidBody = GetComponent<Rigidbody2D>();
+        m_BoxCollider2D = GetComponent<BoxCollider2D>();
     }
 
-    void Jump()
+    private void Jump()
     {
         if (leftForce == 0 && rightForce == 0) return;
 
@@ -35,26 +38,35 @@ public class FrogControls : MonoBehaviour
         rightForce = 0;
     }
 
+    private bool IsGrounded()
+    {
+        float groundCheckerHeight = m_BoxCollider2D.bounds.extents.y * 0.1f; // 10% of the collider's height
+        RaycastHit2D raycastHit = Physics2D.BoxCast(m_BoxCollider2D.bounds.center, m_BoxCollider2D.bounds.size, 0f, Vector2.down, groundCheckerHeight, platformLayerMask);
+        Debug.DrawRay(m_BoxCollider2D.bounds.center + new Vector3(m_BoxCollider2D.bounds.extents.x, 0), Vector2.down * (m_BoxCollider2D.bounds.extents.y + groundCheckerHeight), Color.green);
+        Debug.DrawRay(m_BoxCollider2D.bounds.center - new Vector3(m_BoxCollider2D.bounds.extents.x, 0), Vector2.down * (m_BoxCollider2D.bounds.extents.y + groundCheckerHeight), Color.green);
+        Debug.DrawRay(m_BoxCollider2D.bounds.center - new Vector3(0, m_BoxCollider2D.bounds.extents.y), Vector2.right * (m_BoxCollider2D.bounds.extents.y), Color.green);
+        return raycastHit.collider != null;
+    }
+
     void Update()
     {
-
-        // TODO: do not allow to charge nor jump when in the air
-
-        if (Input.GetButton("LeftLeg"))
+        if (IsGrounded())
         {
-            leftForce += 1.0f;
-        }
+            if (Input.GetButton("LeftLeg"))
+            {
+                leftForce += 1.0f;
+            }
 
-        if (Input.GetButton("RightLeg"))
-        {
-            rightForce += 1.0f;
-        }
+            if (Input.GetButton("RightLeg"))
+            {
+                rightForce += 1.0f;
+            }
 
-        if (Input.GetButtonUp("LeftLeg") || Input.GetButtonUp("RightLeg")
-            || rightForce >= MAX_JUMP_CHARGE || leftForce >= MAX_JUMP_CHARGE)
-        {
-            Jump();
+            if (Input.GetButtonUp("LeftLeg") || Input.GetButtonUp("RightLeg")
+                || rightForce >= MAX_JUMP_CHARGE || leftForce >= MAX_JUMP_CHARGE)
+            {
+                Jump();
+            }
         }
-
     }
 }

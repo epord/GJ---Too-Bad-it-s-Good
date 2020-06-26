@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +8,7 @@ public class FrogControls : MonoBehaviour
     [SerializeField] private float MAX_JUMP_CHARGE = 300.0f;
     [SerializeField] private float JUMP_FORCE = 3000.0f;
     [SerializeField] private float MAX_WALL_HANG_TIME = 5f; // in seconds
+    [SerializeField] private float MAX_SPEED_TO_HANG = 7f; // in seconds
     [SerializeField] private LayerMask platformLayerMask;
 
     // TODO: keep them private (public for debug only)
@@ -82,7 +83,7 @@ public class FrogControls : MonoBehaviour
         m_RigidBody.constraints &= ~RigidbodyConstraints2D.FreezePosition;
         m_RigidBody.AddForce(Vector2.zero); // hack to unfreeze position contraints
         isHanging = false;
-        hasHanged = true;
+        hasHanged = !IsGrounded();
     }
 
     IEnumerator HangOnWall()
@@ -124,9 +125,14 @@ public class FrogControls : MonoBehaviour
         {
             ResetJump();
         }
+
         // Hang logic
-        if (!isHanging && !hasHanged && !isGrounded && (isTouchingLeft || isTouchingRight))
-        {
+        if (!isHanging
+            && !hasHanged
+            && !isGrounded
+            && m_RigidBody.velocity.magnitude < MAX_SPEED_TO_HANG
+            && (isTouchingLeft || isTouchingRight)
+        ) {
             if (hangOnWallCoroutine != null) StopCoroutine(hangOnWallCoroutine);
             hangOnWallCoroutine = HangOnWall();
             StartCoroutine(hangOnWallCoroutine);

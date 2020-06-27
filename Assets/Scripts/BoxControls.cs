@@ -8,17 +8,20 @@ public class BoxControls : MonoBehaviour
 {
     // Contants that should be initialized from th GUI
     public float MAX_JUMP_CHARGE = 300.0f;
+    public float BASE_CHARGE = 5.0f;
     public float JUMP_FORCE = 3000.0f;
     public float TORQUE_FORCE = 10.0f;
     public float AngularSpeed;
-    public float Speed; 
-
+    public float Speed;
+    public int DOUBLE_JUMP_WINDOW_MILISECONDS = 1000;
+    
     private Rigidbody2D m_RigidBody;
     private Corner bottomLeftCorner; 
     private Corner topLeftCorner; 
     private Corner bottomRightCorner; 
     private Corner topRightCorner;
     private Corner[] corners;
+    private DateTime lastTimeJumped;
 
     void Start()
     {
@@ -32,7 +35,7 @@ public class BoxControls : MonoBehaviour
 
     public class Corner
     {
-        public float force = 0.0f;
+        public float charge = 0.0f;
         public Transform transform;
         public string buttonName;
         public Corner(Transform transform, String buttonName)
@@ -44,12 +47,20 @@ public class BoxControls : MonoBehaviour
 
     void Jump(Corner corner)
     {
+
+    
+        if (corner.charge < 0.1) return;
         
-        
-        if (corner.force < 0.1) return;
+        DateTime currentTime = DateTime.Now;
+        if ((currentTime - lastTimeJumped).Milliseconds >= DOUBLE_JUMP_WINDOW_MILISECONDS)
+        {
+            m_RigidBody.velocity = Vector3.zero;
+        }
+        lastTimeJumped = currentTime;
+
         
         // Force        
-        float absoluteForce = corner.force / MAX_JUMP_CHARGE * JUMP_FORCE;
+        float absoluteForce = (BASE_CHARGE + corner.charge) / MAX_JUMP_CHARGE * JUMP_FORCE;
         Vector3 forceVector = Vector3.Normalize(gameObject.transform.position - corner.transform.position);
         Vector3 force = forceVector * absoluteForce;
         Vector3 position = corner.transform.position;
@@ -59,13 +70,14 @@ public class BoxControls : MonoBehaviour
 
         // We multiply with forceVector.x to make less rotation when x is smaller. It also changes the rotation from
         // clockwise to counter clockwise if x is negative.
-        float torque = corner.force * forceVector.x * TORQUE_FORCE * -1; 
+        float torque = (BASE_CHARGE + corner.charge) * forceVector.x * TORQUE_FORCE * -1; 
         m_RigidBody.AddTorque(torque);
       
         // Reset
-        corner.force = 0.0f;
+        corner.charge = 0.0f;
        
     }
+
 
     void Update()
     {
@@ -73,11 +85,15 @@ public class BoxControls : MonoBehaviour
         Speed = m_RigidBody.velocity.magnitude;
         foreach(Corner corner in corners)
         {
-            if (Input.GetButton(corner.buttonName))
+            if (Input.GetButtonDown(corner.buttonName))
             {
-                corner.force += 1.0f;
+                corner.charge += 1.0f;
             }
-            if (Input.GetButtonUp(corner.buttonName) ||  corner.force >= MAX_JUMP_CHARGE)
+            else if (corner.charge > 0 && Input.GetButton(corner.buttonName))
+            {
+                corner.charge += 1.0f;
+            }
+            if (Input.GetButtonUp(corner.buttonName) ||  corner.charge >= MAX_JUMP_CHARGE - BASE_CHARGE)
             {
                 Jump(corner);
             }

@@ -100,12 +100,8 @@ public class BoxControls : MonoBehaviour
             }
             else if (corner.charge > 0 && Input.GetButton(corner.buttonName))
             {
-<<<<<<< HEAD
                 corner.charge += 1.0f;
-=======
-                corner.force += 1.0f;
                 corner.sprite.enabled = true;
->>>>>>> Add new simon sprites
             }
             if (Input.GetButtonUp(corner.buttonName) ||  corner.charge >= MAX_JUMP_CHARGE - BASE_CHARGE)
             {

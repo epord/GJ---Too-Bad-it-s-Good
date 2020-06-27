@@ -26,10 +26,17 @@ public class BoxControls : MonoBehaviour
     void Start()
     {
         m_RigidBody = GetComponent<Rigidbody2D>();
-        bottomLeftCorner = new Corner(transform.Find("BottomLeftCorner"), "bottomLeftJump");
-        topLeftCorner = new Corner(transform.Find("TopLeftCorner"), "topLeftJump");
-        bottomRightCorner = new Corner(transform.Find("BottomRightCorner"), "bottomRightJump");
-        topRightCorner = new Corner(transform.Find("TopRightCorner"), "topRightJump");
+
+        SpriteRenderer yellowSprite = transform.Find("yellow").gameObject.GetComponent<SpriteRenderer>();
+        SpriteRenderer redSprite = transform.Find("red").gameObject.GetComponent<SpriteRenderer>();
+        SpriteRenderer blueSprite = transform.Find("blue").gameObject.GetComponent<SpriteRenderer>();
+        SpriteRenderer greenSprite = transform.Find("green").gameObject.GetComponent<SpriteRenderer>();
+
+        bottomLeftCorner = new Corner(transform.Find("BottomLeftCorner"), "bottomLeftJump", yellowSprite);
+        topLeftCorner = new Corner(transform.Find("TopLeftCorner"), "topLeftJump", redSprite);
+        bottomRightCorner = new Corner(transform.Find("BottomRightCorner"), "bottomRightJump", blueSprite);
+        topRightCorner = new Corner(transform.Find("TopRightCorner"), "topRightJump", greenSprite);
+
         corners = new Corner[]{bottomLeftCorner, topLeftCorner, bottomRightCorner, topRightCorner};
     }
 
@@ -38,10 +45,12 @@ public class BoxControls : MonoBehaviour
         public float charge = 0.0f;
         public Transform transform;
         public string buttonName;
-        public Corner(Transform transform, String buttonName)
+        public SpriteRenderer sprite;
+        public Corner(Transform transform, String buttonName, SpriteRenderer sprite)
         {
             this.transform = transform;
             this.buttonName = buttonName;
+            this.sprite = sprite;
         }
     }
 
@@ -91,11 +100,17 @@ public class BoxControls : MonoBehaviour
             }
             else if (corner.charge > 0 && Input.GetButton(corner.buttonName))
             {
+<<<<<<< HEAD
                 corner.charge += 1.0f;
+=======
+                corner.force += 1.0f;
+                corner.sprite.enabled = true;
+>>>>>>> Add new simon sprites
             }
             if (Input.GetButtonUp(corner.buttonName) ||  corner.charge >= MAX_JUMP_CHARGE - BASE_CHARGE)
             {
                 Jump(corner);
+                corner.sprite.enabled = false;
             }
         }
     }

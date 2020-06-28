@@ -2065,11 +2065,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Simon
       objectReference: {fileID: 0}
-    - target: {fileID: 3888624823393635869, guid: b9959326802fb48468db9a39016a7b95,
-        type: 3}
-      propertyPath: m_AngularDrag
-      value: 0.7
-      objectReference: {fileID: 0}
     - target: {fileID: 3888624823393635870, guid: b9959326802fb48468db9a39016a7b95,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GoToMainMenu : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class GoToMainMenu : MonoBehaviour
     {
         if (Input.anyKeyDown)
         {
-            Debug.Log("GO TO MAIN MENU");
+            SceneManager.LoadScene("[Diego]BoxScene");
         }
     }
 }

@@ -13,7 +13,7 @@ public class End : MonoBehaviour
     IEnumerator EndLevel()
     {
         int timeScore = 100 - (int)(Mathf.Max(0, (totalTime - 30f)) / 600f * 100f);
-        int jumpScore = 100 - (int)(Mathf.Max(0, (jumpsCount - 50f)) / 2000f * 100f);
+        int jumpScore = 100 - (int)(Mathf.Max(0, (jumpsCount - 80f)) / 2000f * 100f);
         int score = Mathf.Min(100, Mathf.Max(0, (timeScore + jumpScore) / 2));
 
         yield return new WaitForSeconds(2);

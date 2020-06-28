@@ -14,6 +14,11 @@ public class BoxControls : MonoBehaviour
     public float AngularSpeed;
     public float Speed;
     public int DOUBLE_JUMP_WINDOW_MILISECONDS = 1000;
+    public AudioSource BottomLeftSound;
+    public AudioSource TopLeftSound;
+    public AudioSource BottomRightSound;
+    public AudioSource TopRightSound;
+
     
     private Rigidbody2D m_RigidBody;
     private Corner bottomLeftCorner; 
@@ -32,10 +37,10 @@ public class BoxControls : MonoBehaviour
         SpriteRenderer blueSprite = transform.Find("blue").gameObject.GetComponent<SpriteRenderer>();
         SpriteRenderer greenSprite = transform.Find("green").gameObject.GetComponent<SpriteRenderer>();
 
-        bottomLeftCorner = new Corner(transform.Find("BottomLeftCorner"), "bottomLeftJump", yellowSprite);
-        topLeftCorner = new Corner(transform.Find("TopLeftCorner"), "topLeftJump", redSprite);
-        bottomRightCorner = new Corner(transform.Find("BottomRightCorner"), "bottomRightJump", blueSprite);
-        topRightCorner = new Corner(transform.Find("TopRightCorner"), "topRightJump", greenSprite);
+        bottomLeftCorner = new Corner(transform.Find("BottomLeftCorner"), "bottomLeftJump", yellowSprite, BottomLeftSound);
+        topLeftCorner = new Corner(transform.Find("TopLeftCorner"), "topLeftJump", redSprite, TopLeftSound);
+        bottomRightCorner = new Corner(transform.Find("BottomRightCorner"), "bottomRightJump", blueSprite, BottomRightSound);
+        topRightCorner = new Corner(transform.Find("TopRightCorner"), "topRightJump", greenSprite, TopRightSound);
 
         corners = new Corner[]{bottomLeftCorner, topLeftCorner, bottomRightCorner, topRightCorner};
     }
@@ -46,11 +51,13 @@ public class BoxControls : MonoBehaviour
         public Transform transform;
         public string buttonName;
         public SpriteRenderer sprite;
-        public Corner(Transform transform, String buttonName, SpriteRenderer sprite)
+        public AudioSource jumpSound;
+        public Corner(Transform transform, String buttonName, SpriteRenderer sprite, AudioSource jumpSound)
         {
             this.transform = transform;
             this.buttonName = buttonName;
             this.sprite = sprite;
+            this.jumpSound = jumpSound;
         }
     }
 
@@ -84,6 +91,7 @@ public class BoxControls : MonoBehaviour
       
         // Reset
         corner.charge = 0.0f;
+        corner.jumpSound.Play();
        
     }
 

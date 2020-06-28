@@ -304,6 +304,7 @@ MonoBehaviour:
   AngularSpeed: 0
   Speed: 0
   DOUBLE_JUMP_WINDOW_MILISECONDS: 500
+  JumpSound: {fileID: 0}
 --- !u!58 &3888624823393635843
 CircleCollider2D:
   m_ObjectHideFlags: 0

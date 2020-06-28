@@ -4,5 +4,23 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/[Diego]BoxScene.unity
+    guid: 250c2551fed9ea44e9d23bb80b644ada
+  - enabled: 1
+    path: Assets/Scenes/[Pedro]BoxScene.unity
+    guid: c924ecad5e0d1c7418464c78d10bb3f2
+  - enabled: 1
+    path: Assets/Scenes/BoxSampleScene.unity
+    guid: e00a1f4057201d841b733a59c7095687
+  - enabled: 1
+    path: Assets/Scenes/End.unity
+    guid: cd52492a5ecdcdd4cb8dd3afaa577bb9
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: e1f82167b111191419389e89ecc9bfb5
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 5e6343a97fa739a4ab0c74b6c3f11dc9
   m_configObjects: {}

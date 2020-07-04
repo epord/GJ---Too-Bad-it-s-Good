@@ -614,6 +614,30 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1531862058}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &276769943 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8253654213453968954, guid: 8563c0055d5f4f142aedad4d8f1b894c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1945684542}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &283103449 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8253654214432265335, guid: 8563c0055d5f4f142aedad4d8f1b894c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1945684542}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &287853204
 GameObject:
   m_ObjectHideFlags: 0
@@ -5945,6 +5969,22 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
       value: Play
       objectReference: {fileID: 0}
+    - target: {fileID: 8253654214680488897, guid: 8563c0055d5f4f142aedad4d8f1b894c,
+        type: 3}
+      propertyPath: MusicSlider
+      value: 
+      objectReference: {fileID: 276769943}
+    - target: {fileID: 8253654214680488897, guid: 8563c0055d5f4f142aedad4d8f1b894c,
+        type: 3}
+      propertyPath: SFXSlider
+      value: 
+      objectReference: {fileID: 283103449}
+    - target: {fileID: 8253654214680488897, guid: 8563c0055d5f4f142aedad4d8f1b894c,
+        type: 3}
+      propertyPath: AudioMixer
+      value: 
+      objectReference: {fileID: 24100000, guid: 0ee70651f74e66e46b9286adba1fb929,
+        type: 2}
     - target: {fileID: 8253654214680488910, guid: 8563c0055d5f4f142aedad4d8f1b894c,
         type: 3}
       propertyPath: m_LocalPosition.x

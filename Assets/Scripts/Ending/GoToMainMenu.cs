@@ -7,7 +7,7 @@ public class GoToMainMenu : MonoBehaviour
 {
     void Update()
     {
-        if (Input.anyKeyDown)
+        if (Input.GetKeyDown("escape"))
         {
             SceneManager.LoadScene("[Diego]BoxScene");
         }
